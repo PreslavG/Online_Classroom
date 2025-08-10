@@ -1,5 +1,7 @@
 import './style.css';
-
+import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
@@ -20,8 +22,33 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+const firebaseApp = initializeApp(firebaseConfig);
+const analytics = getAnalytics(firebaseApp);
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const app = express();
+
+app.use(express.static(path.join(__dirname, "dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "dist", "index.html"));
+});
+
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Listening on port ${PORT}`);
+});
+
+const servers = {
+  iceServers: [
+    {
+      urls: [
+        'stun:stun1.l.google.com:19302',
+        'stun:stun2.l.google.com:19302'
+      ]
+    }
+  ]
+};
 
 // Global State
 const pc = new RTCPeerConnection(servers);
