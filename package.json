@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "start": "serve -s dist -l 8080"
   },
   "devDependencies": {
     "vite": "^2.0.5"
@@ -13,4 +14,6 @@
     "firebase": "^12.1.0",
     "serve": "^14.2.4"
   }
+
+  
 }
