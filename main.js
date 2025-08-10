@@ -1,25 +1,27 @@
 import './style.css';
 
-import firebase from 'firebase/app';
-import 'firebase/firestore';
 
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  // your config
+  apiKey: "AIzaSyDg015yHZp085jag5rd4TdxEhQruMPOIlU",
+  authDomain: "online-classroom-42fe3.firebaseapp.com",
+  projectId: "online-classroom-42fe3",
+  storageBucket: "online-classroom-42fe3.firebasestorage.app",
+  messagingSenderId: "1025372282011",
+  appId: "1:1025372282011:web:27c9b2b36968f485eb3a3e",
+  measurementId: "G-EYVMGRMELW"
 };
 
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
-const firestore = firebase.firestore();
-
-const servers = {
-  iceServers: [
-    {
-      urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'],
-    },
-  ],
-  iceCandidatePoolSize: 10,
-};
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
 // Global State
 const pc = new RTCPeerConnection(servers);
