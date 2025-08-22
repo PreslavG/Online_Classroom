@@ -2,40 +2,62 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="stylesheet" href="style.css">
+
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WebRTC Demo</title>
   </head>
   <body>
-    <h2>1. Start your Webcam</h2>
-    <div class="videos">
-      <span>
-        <h3>Local Stream</h3>
-        <video id="webcamVideo" autoplay playsinline></video>
-      </span>
-      <span>
-        <h3>Remote Stream</h3>
-        <video id="remoteVideo" autoplay playsinline></video>
-      </span>
+    <div class="login">
+
+        <form action="" class="login__form">
+          <h1 class="login__title">Login</h1>
+
+          <div class="login__content">
+            <div class="login__box">
+              <i class="bx bx-lock-alt"></i>
+              
+              <div class="login__box-input">
+                <input type="email" required class="login__input" placeholder="">
+                <label for="" class="login__label">Username</label>
+              </div>
+            </div>
+
+            <div class="login__box">
+              <i class="ri-lock-2-line login__icon"></i>
 
 
-    </div>
+              <div class="login__box-input">
+                <input type="password" required class="login__input" id="login-pas" placeholder="">
+                <label for="" class="login__label">Password</label>
+                <i class="ri-eye-off-line login__eye"></i>
+               </div>
+            </div>
+          </div>
 
-    <button id="webcamButton">Start webcam</button>
-    <h2>2. Create a new Call</h2>
-    <button id="callButton" disabled>Create Call (offer)</button>
+          <div class="login__check">
+            <div class="login__check-group">
+              <input type="checkbox" class="login__check-input">
+              <label for="" class="login__check-label">Remember me</label>
+            </div>
 
-    <h2>3. Join a Call</h2>
-    <p>Answer the call from a different browser window or device</p>
+              <a href="#" class="login__forgot">Forgot Password?</a>
+          </div>
+
+          <button type="submit"  class="login__button" onclick="window.location.href='webRoom.html'">Login</button>
+
+          <p class="login__register">
+            Don't have an account? <a href="registration.html">Register</a>
+          </p>
+        </form>
+      </div>
     
-    <input id="callInput" />
-    <button id="answerButton" disabled>Answer</button>
-
-    <h2>4. Hangup</h2>
-
-    <button id="hangupButton" disabled>Hangup</button>
-
+    
     <script type="module" src="/main.js"></script>
+    <script type="module" src="/authentication.js"></script>
+    
+    
 
   </body>
 </html>
