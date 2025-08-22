@@ -1,7 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,onAuthStateChanged } from "firebase/auth";
-
-
+import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail} from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDg015yHZp085jag5rd4TdxEhQruMPOIlU",
@@ -13,35 +11,44 @@ const firebaseConfig = {
   measurementId: "G-EYVMGRMELW"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 
+// Select the form
+const loginForm = document.querySelector(".login__form");
 
-const auth = getAuth();
-createUserWithEmailAndPassword(auth, email, password)
-  .then((userCredential) => {
-    const user = userCredential.user;
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    // ..
-  });
+loginForm.addEventListener("submit", (e) => {
+  e.preventDefault(); // stop form from refreshing page
 
-signInWithEmailAndPassword(auth, email, password)
-  .then((userCredential) => {
-    const user = userCredential.user;
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-  });
+  const email = loginForm.querySelector('input[type="email"]').value;
+  const password = loginForm.querySelector('input[type="password"]').value;
 
-  onAuthStateChanged(auth, (user) => {
-  if (user) {
-    alert("User is signed in");
-    const uid = user.uid;
-    // ...
-  } else {
-    alert("No user is signed in");
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      console.log("Login successful:", userCredential.user);
+      window.location.href = "webRoom.html";
+    })
+    .catch((error) => {
+      alert(error.message);
+    });
+});
+const forgotPasswordLink = document.querySelector(".login__forgot");
+forgotPasswordLink.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  const email = loginForm.querySelector('input[type="email"]').value;
+
+  if (!email) {
+    alert("Please enter your email first.");
+    return;
   }
+
+  sendPasswordResetEmail(auth, email)
+    .then(() => {
+      alert("Password reset email sent! Check your inbox.");
+    })
+    .catch((error) => {
+      alert(error.message);
+    });
 });

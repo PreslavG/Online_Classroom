@@ -11,6 +11,8 @@
   <body>
     <div class="login">
 
+      <img src="https://images.pexels.com/photos/1183099/pexels-photo-1183099.jpeg?cs=srgb&dl=pexels-simon73-1183099.jpg&fm=jpg"  class="login__img" alt="">
+
         <form action="" class="login__form">
           <h1 class="login__title">Login</h1>
 
@@ -19,8 +21,7 @@
               <i class="bx bx-lock-alt"></i>
               
               <div class="login__box-input">
-                <input type="email" required class="login__input" placeholder="">
-                <label for="" class="login__label">Username</label>
+                <input type="email" required class="login__input" placeholder="Email">
               </div>
             </div>
 
@@ -29,23 +30,18 @@
 
 
               <div class="login__box-input">
-                <input type="password" required class="login__input" id="login-pas" placeholder="">
-                <label for="" class="login__label">Password</label>
+                <input type="password" required class="login__input" id="login-pas" placeholder="Password">
                 <i class="ri-eye-off-line login__eye"></i>
                </div>
             </div>
           </div>
 
           <div class="login__check">
-            <div class="login__check-group">
-              <input type="checkbox" class="login__check-input">
-              <label for="" class="login__check-label">Remember me</label>
-            </div>
 
               <a href="#" class="login__forgot">Forgot Password?</a>
           </div>
 
-          <button type="submit"  class="login__button" onclick="window.location.href='webRoom.html'">Login</button>
+          <button type="submit"  class="login__button">Login</button>
 
           <p class="login__register">
             Don't have an account? <a href="registration.html">Register</a>
@@ -55,7 +51,7 @@
     
     
     <script type="module" src="/main.js"></script>
-    <script type="module" src="/authentication.js"></script>
+    <script type="module" src="/login.js"></script>
     
     
 
