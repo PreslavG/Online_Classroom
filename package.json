@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "start": "node server.js",
     "build": "vite build",
+    "start": "vite --port 8080",
     "preview": "vite preview"
   },
   "dependencies": {
