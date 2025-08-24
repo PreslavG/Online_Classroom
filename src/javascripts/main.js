@@ -17,15 +17,15 @@ const servers = {
 const express = require("express");
 const app = express();
 
-// MUST use process.env.PORT (Cloud Run sets this for you)
+// Must use process.env.PORT, fallback to 8080 locally
 const PORT = process.env.PORT || 8080;
 
 app.get("/", (req, res) => {
   res.send("Hello from Cloud Run!");
 });
 
-app.listen(PORT, () => {
-  console.log(`Server listening on port ${PORT}`);
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Listening on port ${PORT}`);
 });
 
 // Global State
