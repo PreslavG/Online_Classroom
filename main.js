@@ -1,5 +1,5 @@
-import '../style.css';
-import { db } from "./firebase";
+import './src/style.css';
+import { db } from "./src/javascripts/firebase";
 import { collection, addDoc } from "firebase/firestore";
 
 
@@ -13,6 +13,8 @@ const servers = {
     }
   ]
 };
+
+
 
 // Global State
 const pc = new RTCPeerConnection(servers);
