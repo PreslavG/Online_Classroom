@@ -76,6 +76,7 @@ webcamButton.onclick = async () => {
     await peerConnection.setRemoteDescription(answerDesc);
   }
 };
+
 } else {
     // User is signed out
     // ...

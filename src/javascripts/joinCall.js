@@ -1,66 +1,80 @@
-import { db } from "./firebase";
+import { db } from "../javascripts/firebase";
 import { 
-  collection, addDoc, doc, setDoc, getDoc, onSnapshot, updateDoc 
+  collection, doc, getDoc, onSnapshot, addDoc 
 } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+
+const auth = getAuth();
+const joincallButton = document.getElementById('joincallButton');
+const remoteVideo = document.getElementById('remoteVideo');
+let userid = null;
+
+onAuthStateChanged(auth, (user,email) => {
+  if (user) {
+    userid = user.uid;
+    email = user.email;
+
+    let remoteStream = null;
 
 // --- WebRTC setup ---
 const configuration = {
-  iceServers: [
-    { urls: "stun:stun.l.google.com:19302" }
-  ]
+  iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
 };
 const peerConnection = new RTCPeerConnection(configuration);
 
+const roomRef = doc(db, "rooms", "Math");
+const calleeCandidatesCollection = collection(roomRef, "calleeCandidates");
 
-
-
-
-{
-alert("Joining call...");
-await peerConnection.setRemoteDescription(offer1);
-
-const answer = await peerConnection.createAnswer();
-await peerConnection.setLocalDescription(answer);
-
-const roomWithAnswer = {
-  answer: {
-    type: answer.type,
-    sdp: answer.sdp
+peerConnection.onicecandidate = async (event) => {
+  if (event.candidate) {
+    await addDoc(calleeCandidatesCollection, event.candidate.toJSON());
   }
 };
 
-const roomsCollection = collection(db, "rooms");
-const roomRef = await addDoc(roomsCollection, roomWithOffer);
-const roomId = roomRef.id;
-const roomSnapshot = await getDoc(roomRef);
-
-
-// ✅ Update Firestore doc
-await updateDoc(roomRef, roomWithAnswer);
-const offer1 = roomSnapshot.data().offer;
-
-// --- Collect ICE candidates ---
-async function collectIceCandidates(roomRef, peerConnection, localName, remoteName) {
-  const candidatesCollection = collection(roomRef, localName);
-
-  peerConnection.addEventListener("icecandidate", (event) => {
-    if (event.candidate) {
-      const json = event.candidate.toJSON();
-      addDoc(candidatesCollection, json);
+// --- Get remote ICE candidates and add to peerConnection ---
+const callerCandidatesCollection = collection(roomRef, "calleeCandidates");
+onSnapshot(callerCandidatesCollection, (snapshot) => {
+  snapshot.docChanges().forEach((change) => {
+    if (change.type === "added") {
+      const candidate = new RTCIceCandidate(change.doc.data());
+      peerConnection.addIceCandidate(candidate);
     }
   });
+});
 
-  const remoteCandidatesCollection = collection(roomRef, remoteName);
+const roomId = roomRef.id;
 
-  onSnapshot(remoteCandidatesCollection, (snapshot) => {
-    snapshot.docChanges().forEach((change) => {
-      if (change.type === "added") {
-        const data = change.doc.data();
-        console.log("Got new remote ICE candidate: ", data);
-        const candidate = new RTCIceCandidate(data);
-        peerConnection.addIceCandidate(candidate);
-      }
-    });
-  });
-}
-}
+document.querySelector('#currentRoom').innerText =
+  `Current room is ${roomId} - You are the callee!`;
+
+   document.querySelector('#userLabel').innerText =
+` ${email} - You are the caller!`;
+
+
+joincallButton.onclick = async () => {
+  remoteStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+  remoteVideo.srcObject = remoteStream;
+
+  remoteStream.getTracks().forEach(track => peerConnection.addTrack(track, remoteStream));
+
+  const roomSnapshot = await getDoc(roomRef);
+  if (!roomSnapshot.exists()) {
+    console.error("Room 'Math' does not exist");
+    return;
+  }
+
+  const roomData = roomSnapshot.data();
+  console.log("Joined room:", roomData);
+
+  if (roomData.answer) {
+    const answerDesc = new RTCSessionDescription(roomData.answer);
+    await peerConnection.setRemoteDescription(answerDesc);
+  }
+};
+
+} else {
+    // User is signed out
+    // ...
+  }
+});
