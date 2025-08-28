@@ -1,5 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail} from "firebase/auth";
+import '../style.css';
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyDg015yHZp085jag5rd4TdxEhQruMPOIlU",
@@ -26,6 +28,7 @@ loginForm.addEventListener("submit", (e) => {
 
   signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
+      alert("Login successful!");
       console.log("Login successful:", userCredential.user);
       window.location.href = "webRoom.html";
     })

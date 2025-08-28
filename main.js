@@ -3,6 +3,7 @@ import { db } from "./src/javascripts/firebase";
 import { collection, addDoc } from "firebase/firestore";
 
 
+
 const servers = {
   iceServers: [
     {
@@ -49,7 +50,12 @@ webcamButton.onclick = async () => {
   };
 
   webcamVideo.srcObject = localStream;
-
+  if (remoteVideo.srcObject == null){
+    alert("No remote video");
+  }
+  else{
+    remoteVideo.srcObject = remoteStream;
+  };
 
   webcamButton.disabled = false;
 
