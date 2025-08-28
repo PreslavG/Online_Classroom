@@ -1,73 +1,83 @@
 import './src/style.css';
 import { db } from "./src/javascripts/firebase";
-import { collection, addDoc } from "firebase/firestore";
+import { 
+  collection, doc, getDoc, onSnapshot, addDoc 
+} from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 
+// --- UI elements ---
+const webcamButton = document.getElementById('webcamButton');
+const localVideo = document.getElementById('localVideo');
 
-const servers = {
-  iceServers: [
-    {
-      urls: [
-        'stun:stun1.l.google.com:19302',
-        'stun:stun2.l.google.com:19302'
-      ]
-    }
-  ]
+let userid = null;
+
+const auth = getAuth();
+onAuthStateChanged(auth, (user,email) => {
+  if (user) {
+    userid = user.uid;
+    email = user.email;
+
+    let localStream = null;
+
+// --- WebRTC setup ---
+const configuration = {
+  iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+};
+const peerConnection = new RTCPeerConnection(configuration);
+
+// --- Handle new ICE candidates from the local peer ---
+const roomRef = doc(db, "rooms", "Math");
+const callerCandidatesCollection = collection(roomRef, "callerCandidates");
+
+peerConnection.onicecandidate = async (event) => {
+  if (event.candidate) {
+    await addDoc(callerCandidatesCollection, event.candidate.toJSON());
+  }
 };
 
+// --- Get remote ICE candidates and add to peerConnection ---
+const calleeCandidatesCollection = collection(roomRef, "calleeCandidates");
+onSnapshot(calleeCandidatesCollection, (snapshot) => {
+  snapshot.docChanges().forEach((change) => {
+    if (change.type === "added") {
+      const candidate = new RTCIceCandidate(change.doc.data());
+      peerConnection.addIceCandidate(candidate);
+    }
+  });
+});
 
+const roomId = roomRef.id;
 
-// Global State
-const pc = new RTCPeerConnection(servers);
-let localStream = null;
-let remoteStream = null;
+document.querySelector('#currentRoom').innerText =
+  `Current room is ${roomId} - You are the caller!`;
 
-// HTML elements
-const webcamButton = document.getElementById('webcamButton');
-const webcamVideo = document.getElementById('webcamVideo');
-const callButton = document.getElementById('callButton');
-const callInput = document.getElementById('callInput');
-const answerButton = document.getElementById('answerButton');
-const remoteVideo = document.getElementById('remoteVideo');
-const hangupButton = document.getElementById('hangupButton');
+   document.querySelector('#userLabel').innerText =
+` ${email} - You are the caller!`;
 
-// 1. Setup media sources
 
 webcamButton.onclick = async () => {
-  localStream = await navigator.mediaDevices.getUserMedia({ video: true});
-  remoteStream = new MediaStream();
+  localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+  localVideo.srcObject = localStream;
 
-  // Push tracks from local stream to peer connection
-  localStream.getTracks().forEach((track) => {
-    pc.addTrack(track, localStream);
-  });
+  localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
 
-  // Pull tracks from remote stream, add to video stream
-  pc.ontrack = (event) => {
-    event.streams[0].getTracks().forEach((track) => {
-      remoteStream.addTrack(track);
-    });
-  };
-
-  webcamVideo.srcObject = localStream;
-  if (remoteVideo.srcObject == null){
-    alert("No remote video");
+  const roomSnapshot = await getDoc(roomRef);
+  if (!roomSnapshot.exists()) {
+    console.error("Room 'Math' does not exist");
+    return;
   }
-  else{
-    remoteVideo.srcObject = remoteStream;
-  };
 
-  webcamButton.disabled = false;
+  const roomData = roomSnapshot.data();
+  console.log("Joined room:", roomData);
 
-  const userId = null;
-  try {
-    await addDoc(collection(db, "myCollection"), {
-      userId: user,
-      createdAt: new Date()
-    });
-    console.log("Document saved with userId:", userId);
-  } catch (error) {
-    console.error("Error adding document:", error);
+  if (roomData.answer) {
+    const answerDesc = new RTCSessionDescription(roomData.answer);
+    await peerConnection.setRemoteDescription(answerDesc);
   }
 };
-
+} else {
+    // User is signed out
+    // ...
+  }
+});

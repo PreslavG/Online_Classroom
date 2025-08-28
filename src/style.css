@@ -73,6 +73,17 @@ body {
     cursor: pointer;
   }
 
+  #joinCallButton {
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    width: 200px;
+    border: none;
+    border-radius: 0.5rem;
+    background-color: rgb(247, 247, 247);
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+  }
+
 
 
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap");

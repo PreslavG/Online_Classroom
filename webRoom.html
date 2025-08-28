@@ -8,27 +8,26 @@
   </head>
 <body>
 
-    <div class="videos">
-      <img src="https://images.pexels.com/photos/1183099/pexels-photo-1183099.jpeg?cs=srgb&dl=pexels-simon73-1183099.jpg&fm=jpg"  class="room__img" alt="">
-      <h2>1. Start your Webcam</h2>
-        <div class="video-wrapper">
-          <video id="webcamVideo" autoplay playsinline></video>
-          <img src="border.png" alt="frame" class="video-frame">
-        </div>
-        <div class="video-wrapper">
-          <video id="remoteVideo" autoplay playsinline></video>
-          <img src="border.png" alt="frame" class="video-frame">
-        </div>
+     <h1>WebRTC with Firestore Signaling</h1>
 
-        <button  id="webcamButton">Start webcam</button>
-        <button id="callButton">Call</button>
-        <button id="answerButton">Answer</button>
-
-
-
-
+  <!-- Video elements -->
+  <div class="videos">
+    <div class="video-wrapper">
+    <video id="localVideo" autoplay playsinline muted></video>
+    <video id="remoteVideo" autoplay playsinline></video>
     </div>
-    <script type="module" src="./main.js"></script>
+  </div>
 
+
+  <!-- Buttons -->
+    <button id="webcamButton">Start Webcam & Create Room</button>
+
+
+    <p id="currentRoom">No room created yet</p>
+    <p id="userLabel">Your name</p>
+
+
+  <!-- Script (make sure type=module for ES imports) -->
+  <script type="module" src="./main.js"></script>
 </body>
 </html>
