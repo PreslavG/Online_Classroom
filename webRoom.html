@@ -1,36 +1,28 @@
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <link rel="stylesheet" href="style.css">
-
-    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WebRTC Demo</title>
-  </head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebRTC Classroom</title>
+  <link rel="stylesheet" href="style.css">
+</head>
 <body>
 
-     <h1>WebRTC with Firestore Signaling</h1>
+  <h1>WebRTC with Socket.IO</h1>
 
-  <!-- Video elements -->
   <div class="videos">
-    <div class="video-wrapper">
     <video id="localVideo" autoplay playsinline muted></video>
     <video id="remoteVideo" autoplay playsinline></video>
-    </div>
   </div>
 
+  <button id="webcamButton">Create Room</button>
+  <button id="joincallButton">Join Room</button>
 
-  <!-- Buttons -->
-    <button id="webcamButton"> Create Room</button>
-    <button id="joincallButton">Join Room</button>
+  <p id="currentRoom">No room created yet</p>
 
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
 
-
-    <p id="currentRoom">No room created yet</p>
-    <p id="userLabel">Your name</p>
-
-
-  <!-- Script (make sure type=module for ES imports) -->
-  <script type="module" src="./main.js"></script>
-  <script type="module" src="./src/javascripts/joinCall.js"></script>
+  <script src="main.js"></script>
+  <!-- Socket.IO client -->
 </body>
 </html>
