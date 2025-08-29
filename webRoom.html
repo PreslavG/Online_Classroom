@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebRTC Classroom</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1>WebRTC with Socket.IO</h1>
+
+  <div class="videos">
+    <video id="localVideo" autoplay playsinline muted></video>
+    <video id="remoteVideo" autoplay playsinline></video>
+  </div>
+
+  <button id="webcamButton">Create Room</button>
+  <button id="joincallButton">Join Room</button>
+
+  <p id="currentRoom">No room created yet</p>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+  <script src="main.js"></script>
+  <!-- Socket.IO client -->
+</body>
+</html>

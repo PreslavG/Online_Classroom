@@ -2,6 +2,10 @@ import { defineConfig } from "vite";
 import { resolve } from "path";
 
 export default defineConfig({
+  server: {
+    port: process.env.PORT ? parseInt(process.env.PORT) : 8080,
+    host: true, // expose to network
+  },
   build: {
     rollupOptions: {
       input: {

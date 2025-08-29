@@ -1,6 +1,7 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, updateProfile } 
-  from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import { initializeApp } from "firebase/app";
+import { getAuth, createUserWithEmailAndPassword, updateProfile} from "firebase/auth";
+import '../style.css';
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyDg015yHZp085jag5rd4TdxEhQruMPOIlU",
@@ -40,7 +41,7 @@ document.querySelector(".login__form").addEventListener("submit", (e) => {
       window.location.href = "index.html";
     })
     .catch((error) => {
-      alert(error.message);
-      console.error(error.code, error.message);
+      alert("Ne taka bratlee");
+      console.error(error.code, error.messag);
     });
 });
