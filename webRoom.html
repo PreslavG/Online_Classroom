@@ -8,8 +8,8 @@
 </head>
 <body>
 
-  <h1>WebRTC with Socket.IO</h1>
-
+  <!-- <h1>WebRTC with Socket.IO</h1>
+  
   <div class="videos">
     <video id="localVideo" autoplay playsinline muted></video>
     <video id="remoteVideo" autoplay playsinline></video>
@@ -18,11 +18,69 @@
   <button id="webcamButton">Create Room</button>
   <button id="joincallButton">Join Room</button>
 
-  <p id="currentRoom">No room created yet</p>
+  <p id="currentRoom">No room created yet</p> -->
 
-  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <h1>Video Room</h1>
+  <video id="localVideo" autoplay muted playsinline style="width: 45%;"></video>
+  <video id="remoteVideo" autoplay playsinline style="width: 45%;"></video>
 
-  <script src="main.js"></script>
-  <!-- Socket.IO client -->
+   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+   <script>
+    // Change to your deployed server URL in production
+    const SERVER_URL = "http://localhost:5000"; 
+    const ROOM_ID = "test-room";
+    const socket = io(SERVER_URL);
+
+    const localVideo = document.getElementById("localVideo");
+    const remoteVideo = document.getElementById("remoteVideo");
+    let localStream;
+    let peerConnection;
+    let otherUserId = null;
+    const config = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
+
+    async function init() {
+      localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      localVideo.srcObject = localStream;
+
+      peerConnection = new RTCPeerConnection(config);
+      localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+      peerConnection.ontrack = e => remoteVideo.srcObject = e.streams[0];
+      peerConnection.onicecandidate = e => {
+        if (e.candidate && otherUserId) {
+          socket.emit("signal", { to: otherUserId, signal: { candidate: e.candidate } });
+        }
+      };
+
+      socket.emit("join-room", ROOM_ID);
+
+      socket.on("user-joined", userId => {
+        otherUserId = userId;
+        createOffer();
+      });
+
+      socket.on("signal", async data => {
+        if (data.signal.type === "offer") {
+          otherUserId = data.from;
+          await peerConnection.setRemoteDescription(new RTCSessionDescription(data.signal));
+          const answer = await peerConnection.createAnswer();
+          await peerConnection.setLocalDescription(answer);
+          socket.emit("signal", { to: data.from, signal: answer });
+        } else if (data.signal.type === "answer") {
+          await peerConnection.setRemoteDescription(new RTCSessionDescription(data.signal));
+        } else if (data.signal.candidate) {
+          await peerConnection.addIceCandidate(new RTCIceCandidate(data.signal.candidate));
+        }
+      });
+    }
+
+    async function createOffer() {
+      const offer = await peerConnection.createOffer();
+      await peerConnection.setLocalDescription(offer);
+      socket.emit("signal", { to: otherUserId, signal: offer });
+    }
+
+    init();
+  </script>
+
 </body>
 </html>
